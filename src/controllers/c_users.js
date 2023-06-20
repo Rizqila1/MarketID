@@ -190,7 +190,7 @@ const updateUser = async (req, res) => {
     const findUser = await modelUser.findById(id);
     if(!findUser) return Messages(res, 404, "User Not Found");
 
-    await isValidator(body, rules, null, async(err, status) => {
+    await isValidator(body, rules, {regex: "This field must be alphabet only"}, async(err, status) => {
       if(!status) return Messages(res, 412, { ...err, status });
 
       let payload = {};
