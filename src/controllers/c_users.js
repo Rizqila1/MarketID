@@ -182,7 +182,7 @@ const updateUser = async (req, res) => {
   const file = req.file;
 
   const rules = {
-    full_name: "required|min:4|max:15",
+    full_name: "required|regex:/^[a-zA-Z ]*$/|min:3|max:15", // Regex alphabet and spaces only
     status: "required|boolean"
   };
 
