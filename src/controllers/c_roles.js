@@ -6,7 +6,7 @@ const createRole = async (req, res) => {
   const name = req.body.name;
 
   const rules = {
-    name : "required|min:4|max:20"
+    name : "required|alpha|min:4|max:20"
   };
 
   try {
@@ -78,7 +78,7 @@ const updateRole = async (req, res) => {
   const name = req.body.name;
 
   const rules = {
-    name: "required|min:4|max:20"
+    name: "required|alpha|min:4|max:20"
   };
 
   try {
@@ -88,7 +88,14 @@ const updateRole = async (req, res) => {
     await isValidator({ name }, rules, null, async(err, status) => {
       if(!status) return Messages(res, 412, { ...err, status });
 
-    const inputName = name.toLowerCase().trim();
+      const inputName = name.toLowerCase().trim();
+      const filter = { name: { $regex: inputName, $options: 'i' } };
+      const isSameName = await modelRoles.findOne(filter);
+      const currentName = findData._doc.name !== inputName;
+
+      if(isSameName && currentName)
+        return Messages(res, 400, `${inputName} roles has been registered on our system`); 
+
     const payload = { name: inputName };
     const updateData = await modelRoles.findByIdAndUpdate(id, payload, { new: true });
 
