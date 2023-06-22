@@ -5,7 +5,7 @@ import uploadImg from "../middleware/upload_img.js";
 
 const Router = express.Router();
 
-Router.get('/products', authentication, admin, allProducts);
+Router.get('/products', authentication, allProducts);
 Router.post('/products/create', authentication, admin, uploadImg, createProduct);
 Router.get('/products/details/:id', authentication, detailProduct);
 Router.put('/products/update/:id', authentication, admin, uploadImg, updateProduct);
