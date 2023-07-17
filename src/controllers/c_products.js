@@ -117,9 +117,9 @@ const updateProduct = async (req, res) => {
   const file = req.file;
 
   const rules = {
-    name: "regex:/^[a-zA-Z0-9 ]*$/|max:20", // Regex alphanumeric and spaces only
-    price: "numeric",
-    category_id: "alpha_num",
+    name: "required|regex:/^[a-zA-Z0-9 ]*$/|max:20", // Regex alphanumeric and spaces only
+    price: "required|numeric",
+    category_id: "required|alpha_num",
   };
 
   try {
