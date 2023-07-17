@@ -119,7 +119,7 @@ const updateProduct = async (req, res) => {
   const rules = {
     name: "regex:/^[a-zA-Z0-9 ]*$/|max:20", // Regex alphanumeric and spaces only
     price: "numeric",
-    category_id: "|alpha_num",
+    category_id: "alpha_num",
   };
 
   try {
