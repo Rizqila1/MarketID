@@ -31,7 +31,7 @@ const createCheckout = async (req, res) => {
   };
 
   try {
-    await isValidator(body, rules, null, async (err, status) => {
+    await isValidator({ ...body }, rules, null, async (err, status) => {
       if (!status) return Messages(res, 412, { ...err, status });
 
       await new modelCheckout(body).save();
