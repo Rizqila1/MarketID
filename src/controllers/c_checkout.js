@@ -31,15 +31,15 @@ const createCheckout = async (req, res) => {
   };
 
   try {
-    await isValidator({ ...body }, rules, null, async (err, status) => {
-      if (!status) return Messages(res, 412, "invalid", { ...err, status });
+    await isValidator(body, rules, null, async (err, status) => {
+      if (!status) return Messages(res, 412, { ...err, status });
 
       await new modelCheckout(body).save();
     });
 
     Messages(res, 201, "Checkout Success", body);
   } catch (error) {
-    Messages(res, 500, error?.message || "Internal server error", body);
+    Messages(res, 500, error?.message || "Internal server error");
   }
 };
 
