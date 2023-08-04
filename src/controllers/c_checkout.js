@@ -35,9 +35,9 @@ const createCheckout = async (req, res) => {
       if (!status) return Messages(res, 412, { ...err, status });
 
       await new modelCheckout(body).save();
-    });
 
-    Messages(res, 201, "Checkout Success", body);
+      Messages(res, 201, "Checkout Success", { invoice });
+    });
   } catch (error) {
     Messages(res, 500, error?.message || "Internal server error");
   }
