@@ -119,9 +119,9 @@ const historyCheckout = async (req, res) => {
 
     // add total income
     const currentTotal = data.map((item) => item.total);
-    let incomes = undefined;
+    let total_expense = undefined;
     if (currentTotal.length) {
-      incomes = currentTotal.reduce(
+      total_expense = currentTotal.reduce(
         (accumulator, currentValue) => accumulator + currentValue
       );
     }
@@ -130,7 +130,7 @@ const historyCheckout = async (req, res) => {
       res,
       200,
       "All Data",
-      { incomes, data },
+      { total_expense, data },
       {
         page,
         per_page,
