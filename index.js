@@ -14,7 +14,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "*",
+    origin: `http://localhost:${PORT}`,
     methods: "GET, POST, OPTIONS, PUT, PATCH, DELETE",
     setHeader:
       "accept-language, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With",
