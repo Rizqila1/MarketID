@@ -7,54 +7,57 @@ const createAddress = async (req, res) => {
 
   const rules = {
     name: "required|regex:/^[a-zA-Z ]*$/|min:4|max:20", // Regex alphabet and spaces only
-    address: "required|regex:/^[a-zA-Z ]*$/|min:12|max:255", 
-    province : {
+    address: "required|min:12|max:255",
+    province: {
       _id: "required",
-      name: "required"
+      name: "required",
     },
     regency: {
       _id: "required",
-      name: "required"
+      name: "required",
     },
     district: {
       _id: "required",
-      name: "required"
+      name: "required",
     },
     village: {
       _id: "required",
-      name: "required"
+      name: "required",
     },
-    passcode: "required|numeric"
+    passcode: "required|numeric",
   };
 
   try {
+    await isValidator(
+      body,
+      rules,
+      { regex: "Special Characters or Number are not allowed" },
+      async (err, status) => {
+        if (!status) return Messages(res, 412, { ...err, status });
 
-    await isValidator(body, rules, {regex: "Special Characters or Number are not allowed"}, async(err, status) => {
-      if(!status) return Messages(res, 412, { ...err, status });
+        const user_id = res.checkout_user._id;
+        const name = body.name.toLowerCase().trim();
+        const address = req.body.address.trim();
 
-      const user_id = res.checkout_user._id;
-      const name = body.name.toLowerCase().trim();
-      const address = req.body.address.trim();
+        const filter = {
+          $and: [{ user_id }, { name }],
+        };
 
-      const filter = {
-        $and: [{ user_id }, { name }]
-      };
+        const findByName = await modelAddress.findOne(filter);
+        if (findByName)
+          return Messages(res, 400, `Name (${name}) has been registered`);
 
-      const findByName = await modelAddress.findOne(filter)
-      if(findByName) return Messages(res, 400, `Name (${name}) has been registered`);
+        const payload = { ...body, name, address, user_id };
 
-      const payload = { ...body, name, address, user_id };
+        await new modelAddress(payload).save();
 
-      await new modelAddress(payload).save();
-
-      Messages(res, 201, "Create Address Success");
-    })
-
+        Messages(res, 201, "Create Address Success");
+      }
+    );
   } catch (error) {
     Messages(res, 500, error?.messages || "Internal server error");
   }
 };
-
 
 const allAddress = async (req, res) => {
   const q = req.query.q ? req.query.q : "";
@@ -71,25 +74,24 @@ const allAddress = async (req, res) => {
     const user_id = res.checkout_user._id;
 
     const filter = {
-      $and: [{ user_id }, { name : { $regex: q, $options: 'i' } }]
+      $and: [{ user_id }, { name: { $regex: q, $options: "i" } }],
     };
 
     const total = await modelAddress.count(filter);
-    const data = await modelAddress.find(filter)
-    .sort({ _id: sort_key })
-    .skip(pages)
-    .limit(per_page);
+    const data = await modelAddress
+      .find(filter)
+      .sort({ _id: sort_key })
+      .skip(pages)
+      .limit(per_page);
 
     Messages(res, 200, "All Data", data, {
       page,
       per_page,
-      total
+      total,
     });
-
-    
   } catch (error) {
     Messages(res, 500, error?.messages || "Internal Server Error");
-  };
+  }
 };
 
 const detailAddress = async (req, res) => {
@@ -98,14 +100,13 @@ const detailAddress = async (req, res) => {
 
   try {
     const filter = {
-      $and: [{ user_id }, { _id: id } ]
+      $and: [{ user_id }, { _id: id }],
     };
 
-    const findAddressByID = await modelAddress.findOne(filter)
-    if(!findAddressByID) return Messages(res, 404, "Address not found");
+    const findAddressByID = await modelAddress.findOne(filter);
+    if (!findAddressByID) return Messages(res, 404, "Address not found");
 
-    Messages(res, 200, "Detail Address", findAddressByID)
-
+    Messages(res, 200, "Detail Address", findAddressByID);
   } catch (error) {
     Messages(res, 500, error?.messages || "Internal Server Error");
   }
@@ -118,48 +119,53 @@ const updateAddress = async (req, res) => {
 
   const rules = {
     name: "required|regex:/^[a-zA-Z ]*$/|min:4|max:20", // Regex alphabet and spaces only
-    address: "required|regex:/^[a-zA-Z ]*$/|min:12|max:255", 
-    province : {
+    address: "required|regex:/^[a-zA-Z ]*$/|min:12|max:255",
+    province: {
       _id: "required",
-      name: "required"
+      name: "required",
     },
     regency: {
       _id: "required",
-      name: "required"
+      name: "required",
     },
     district: {
       _id: "required",
-      name: "required"
+      name: "required",
     },
     village: {
       _id: "required",
-      name: "required"
+      name: "required",
     },
-    passcode: "required|numeric"
+    passcode: "required|numeric",
   };
 
   try {
-
     const filter = {
-      $and: [{ user_id }, { _id: id } ]
+      $and: [{ user_id }, { _id: id }],
     };
 
-    const findAddressByID = await modelAddress.findOne(filter)
-    if(!findAddressByID) return Messages(res, 404, "Address not found");
+    const findAddressByID = await modelAddress.findOne(filter);
+    if (!findAddressByID) return Messages(res, 404, "Address not found");
 
-    await isValidator(body, rules, {regex: "Special Characters or Number are not allowed"}, async(err, status) => {
-      if(!status) return Messages(res, 412, { ...err, status });
+    await isValidator(
+      body,
+      rules,
+      { regex: "Special Characters or Number are not allowed" },
+      async (err, status) => {
+        if (!status) return Messages(res, 412, { ...err, status });
 
-      const name = req.body.name.toLowerCase().trim();
-      const address = req.body.address.trim();
+        const name = req.body.name.toLowerCase().trim();
+        const address = req.body.address.trim();
 
-      const payload = { ...body, name, address };
+        const payload = { ...body, name, address };
 
-      const data = await modelAddress.findOneAndUpdate(filter, payload, { new: true });
+        const data = await modelAddress.findOneAndUpdate(filter, payload, {
+          new: true,
+        });
 
-      Messages(res, 200, "Update Adress Success", data)
-    });
-
+        Messages(res, 200, "Update Adress Success", data);
+      }
+    );
   } catch (error) {
     Messages(res, 500, error?.messages || "Internal Server Error");
   }
@@ -171,19 +177,18 @@ const deleteAddress = async (req, res) => {
 
   try {
     const filter = {
-      $and: [{ user_id }, { _id: id } ]
+      $and: [{ user_id }, { _id: id }],
     };
 
-    const findAddressByID = await modelAddress.findOne(filter)
-    if(!findAddressByID) return Messages(res, 404, "Address not found");
+    const findAddressByID = await modelAddress.findOne(filter);
+    if (!findAddressByID) return Messages(res, 404, "Address not found");
 
     await modelAddress.deleteOne(filter);
 
     Messages(res, 200, `Delete Address Success`);
-    
   } catch (error) {
     Messages(res, 500, error?.messages || "Internal server error");
-  };
+  }
 };
 
 export {
@@ -191,5 +196,5 @@ export {
   allAddress,
   detailAddress,
   updateAddress,
-  deleteAddress
-}
+  deleteAddress,
+};
