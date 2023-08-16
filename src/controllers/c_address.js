@@ -119,7 +119,7 @@ const updateAddress = async (req, res) => {
 
   const rules = {
     name: "required|regex:/^[a-zA-Z ]*$/|min:4|max:20", // Regex alphabet and spaces only
-    address: "required|regex:/^[a-zA-Z ]*$/|min:12|max:255",
+    address: "required|min:12|max:255",
     province: {
       _id: "required",
       name: "required",
