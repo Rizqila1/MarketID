@@ -9,6 +9,7 @@ import r_categories from "./src/routers/r_categories.js";
 import r_products from "./src/routers/r_products.js";
 import r_checkout from "./src/routers/r.checkout.js";
 import r_address from "./src/routers/r_address.js";
+import r_regionIDN from "./src/routers/r_regionIDN.js";
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use("/api/v1", r_categories);
 app.use("/api/v1", r_products);
 app.use("/api/v1", r_checkout);
 app.use("/api/v1", r_address);
+app.use("/api/v1", r_regionIDN);
 
 // Default Page
 app.use("/", (req, res) => {
